@@ -140,4 +140,6 @@ int main(){
         }
     }while (command!="quit");
 
+    return 0;
+
 }
