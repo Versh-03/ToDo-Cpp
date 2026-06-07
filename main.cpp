@@ -1,3 +1,4 @@
+#include <cctype>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -35,7 +36,9 @@ public:
 
     bool deleteTask(string name){ //Deleting from the List
         for(int i=0;i<tasks.size();i++){
-            if(tasks[i].name==name){
+            string lowerStored = tasks[i].name;
+            transform(lowerStored.begin(), lowerStored.end(), lowerStored.begin(), ::tolower);
+            if(lowerStored == name){
                 tasks.erase(tasks.begin()+i);
                 for(int i=0;i<tasks.size();i++) tasks[i].id=i+1;
                 return true;
@@ -46,12 +49,17 @@ public:
 
     bool completeTask(string name){ //Mark Task as Finish/Unfinished
         for(int i=0;i<tasks.size();i++){
-            if(tasks[i].name==name){
+            string lowerStored = tasks[i].name;
+            transform(lowerStored.begin(), lowerStored.end(), lowerStored.begin(), ::tolower);
+            if(lowerStored == name){
                 tasks[i].completed=!tasks[i].completed;
                 return true;
             }
         }
         return false;
+    }
+    void clearAll(){
+        tasks.clear();
     }
 
     void saveToFile(){ //Saving Data into the File
@@ -79,7 +87,7 @@ public:
 };
 
 void showMenu(){
-    cout<<"add --> Add Items\nview --> View List\ndelete --> Delete Item\nmark --> Mark as complete/incomplete\nmenu --> Show Menu\nquit --> Quit"<<endl;
+    cout<<"add --> Add Items\nview --> View List\ndelete --> Delete Item\nmark --> Mark as complete/incomplete\nmenu --> Show Menu\nclear --> Clear List\nquit --> Quit"<<endl;
 }
 
 int main(){
@@ -94,6 +102,7 @@ int main(){
         cin>>command;
         transform(command.begin(), command.end(), command.begin(), ::tolower);
         getline(cin,argument);
+        transform(argument.begin(),argument.end(),argument.begin(),::tolower);
         if(!argument.empty()) argument = argument.substr(1);
         if(command == "add"){
             if(argument.empty()){
@@ -135,10 +144,18 @@ int main(){
         else if(command=="menu"){
             showMenu();
         }
-        else{
-            cout<<"Invalid command.";
+        else if(command == "quit"){
+            break;
         }
-    }while (command!="quit");
+        else if(command=="clear"){
+            t1.clearAll();
+            t1.saveToFile();
+            cout<<"List Cleared"<<endl;
+        }
+        else{
+            cout<<"Invalid command."<<endl;
+        }
+    }while (true);
 
     return 0;
 
